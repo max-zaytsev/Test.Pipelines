@@ -35,7 +35,7 @@ stages:
           inputs:
             targetType: filePath
             filePath: 'Read-Settings.ps1'
-            arguments: '-containername "${{ version.Container.containerName }}" -containerimage "${{ version.Container.Imagename }}" -licensePath "./Cronus.flf" '
+            arguments: '-containername "${{ version.Container.containerName }}" -containerimage "${{ version.Container.Imagename }}"'
             failOnStderr: true
 
         - task: PowerShell@2

@@ -38,13 +38,7 @@
     [string] $ContainerSasToken,
 
     [Parameter(Mandatory = $false)]
-    [String] $FullLicensePath = $env:FULLLICENSEPATH,
-
-    [Parameter(Mandatory=$false)]
-    [string] $projectFolderPath = $ENV:PROJECTFOLDERPATH,
-
-    [Parameter(Mandatory = $false)]
-    [string] $buildArtifactFolder = $ENV:BUILD_ARTIFACTSTAGINGDIRECTORY
+    [String] $FullLicensePath = $env:FULLLICENSEPATH
 )
 
 function GetURL{
@@ -136,21 +130,21 @@ $parameters = @{
 }
 
 Write-Host $FullLicensePath
-# if ($FullLicensePath) {
+if ($FullLicensePath) {
     $parameters += @{
-        "licenseFile" = './Cronus.flf'
+        "licenseFile" = $FullLicensePath
     }
-# }
+}
 
-$workspaceFolder = Join-Path $projectFolderPath $versionName
-New-Item -ItemType Directory -Path $workspaceFolder
-$additionalParameters = @("--volume ""${workspaceFolder}:C:\Source\build""")
-write-host "workspacefolder $workspaceFolder"
+# $workspaceFolder = Join-Path $projectFolderPath $versionName
+# New-Item -ItemType Directory -Path $workspaceFolder
+# $additionalParameters = @("--volume ""${workspaceFolder}:C:\Source\build""")
+# write-host "workspacefolder $workspaceFolder"
 
-$ArtifactFolder = Join-Path $buildArtifactFolder $versionName
-New-Item -ItemType Directory -Path $ArtifactFolder
-$additionalParameters += @("--volume ""${ArtifactFolder}:C:\Source\artifact""")
-write-host "ArtifactFolder $ArtifactFolder"
+# $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+# New-Item -ItemType Directory -Path $ArtifactFolder
+# $additionalParameters += @("--volume ""${ArtifactFolder}:C:\Source\artifact""")
+# write-host "ArtifactFolder $ArtifactFolder"
 
 Write-Host "Getting URL for $ContainerMajor $ContainerMinor $ContainerCountry $ContainerTarget"
 $URLParameters = @{}

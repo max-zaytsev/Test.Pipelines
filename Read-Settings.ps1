@@ -17,8 +17,8 @@ Param(
     [Parameter(Mandatory=$false)]
     [string] $containerimage,
 
-    [Parameter(Mandatory=$true)]
-    [string] $licensePath
+    # [Parameter(Mandatory=$true)]
+    # [string] $licensePath
 )
 Write-Host $dummy
 Write-Host $projectFolder
@@ -62,7 +62,7 @@ Write-Host "##vso[task.setvariable variable=imageName]$($containerImage)"
 # if($addDefaultNetworkPath -eq 'true'){
 #     $FullLicensePath = Join-Path -Path $LicensePath -ChildPath $LicenseFile
 # } else {
-    $FullLicensePath = $LicenseFile
+    $FullLicensePath = Join-Path $buildProjectFolder 'Cronus.flf'
 # }
 Write-Host "Set FullLicensePath = $FullLicensePath"
 Write-Host "##vso[task.setvariable variable=FullLicensePath]$FullLicensePath"  
