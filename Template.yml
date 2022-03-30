@@ -37,7 +37,7 @@ stages:
             LicenseFile: $(LicenseFile)
           inputs:
             targetType: filePath
-            filePath: 'Comsol.Build.Pipelines\buildscripts\Create-Container.ps1'
+            filePath: 'Create-Container.ps1'
             arguments: '-imageName "${{ version.Container.Imagename }}" 
                         -ContainerMajor "${{ version.Container.Major }}" 
                         -ContainerMinor "${{ version.Container.Minor }}" 
@@ -68,7 +68,7 @@ stages:
           timeoutInMinutes: 20
           inputs:
             targetType: filePath
-            filePath: 'Comsol.Build.Pipelines\buildscripts\Restart-Container.ps1'
+            filePath: 'Restart-Container.ps1'
             arguments: '-Target "${{ version.Container.Target }}"'
 
         # - ${{ each dependencyFolder in version.dependencyFolders }}:
