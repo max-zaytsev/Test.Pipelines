@@ -8,11 +8,11 @@ stages:
 
     steps:
     - task: PowerShell@2
-      displayName: Init
+      displayName: 'Install BCContainerHelper'
       inputs:
-        targetType: 'inline'
-        script: |
-          Write-Host "Initial task"
+        targetType: filePath
+        filePath: 'Install-BCContainerHelper.ps1'
+        failOnStderr: true
 
 - ${{ each version in parameters.selectVersions }}:
   - stage: 'build${{ version.versionName }}'

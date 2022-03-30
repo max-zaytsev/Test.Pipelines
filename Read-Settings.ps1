@@ -66,3 +66,7 @@ Write-Host "##vso[task.setvariable variable=imageName]$($containerImage)"
 # }
 Write-Host "Set FullLicensePath = $FullLicensePath"
 Write-Host "##vso[task.setvariable variable=FullLicensePath]$FullLicensePath"  
+
+$Password = "abc123"
+Write-Host "Set Container Password"
+Write-Host "##vso[task.setvariable variable=Password]$Password"  
