@@ -139,14 +139,14 @@ stages:
 
       # #   condition: eq(version.Deployment.AppExport, true)
       # #   steps:
-      #     - task: PowerShell@2
-      #       displayName: 'Publish App ${{ appFolder }}'
-      #       timeoutInMinutes: 10
-      #       inputs:
-      #         targetType: filePath
-      #         filePath: 'buildscripts\Publish-App.ps1'
-      #         arguments: '-skipVerification -appFolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
-      #         failOnStderr: true
+          - task: PowerShell@2
+            displayName: 'Publish App ${{ appFolder }}'
+            timeoutInMinutes: 10
+            inputs:
+              targetType: filePath
+              filePath: 'buildscripts\Publish-App.ps1'
+              arguments: '-skipVerification -appFolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
+              failOnStderr: true
 
       #   - ${{ each testFolder in parameters.testFolders }}:
       #     - task: PowerShell@2
