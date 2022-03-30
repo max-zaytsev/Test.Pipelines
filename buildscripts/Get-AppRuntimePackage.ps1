@@ -31,6 +31,8 @@ $appFile = (Get-Item (Join-Path $ArtifactFolder "*.app")).FullName
 $appJsonFile = (Get-Item (Join-Path $ArtifactFolder "app.json")).FullName
 $appJson = Get-Content $appJsonFile | ConvertFrom-Json
 
+$appJson
+
 if (-not ($appVersion)) {
     $appVersion = $appJson.Version
 }
@@ -39,6 +41,7 @@ $runtimeAppFolder = Join-Path $ArtifactFolder "RuntimePackages"
 New-Item -Path $runtimeAppFolder -ItemType Directory | Out-Null
 
 Write-Host "Getting Runtime Package $appFolder and moving to $runtimeAppFolder"
+Write-Host "Appname: " $appJson.name
 Get-NavContainerAppRuntimePackage -containerName $containerName -appName $appJson.name -appVersion $appVersion -appFile (Join-Path $runtimeAppFolder ([System.IO.Path]::GetFileName($appFile)))
 
 Write-Host
