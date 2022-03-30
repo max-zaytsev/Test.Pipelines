@@ -29,3 +29,6 @@ if ( $Target -eq 'sandbox') {
             Get-NAVTenant BC
     }
 }
+
+Write-Host
+Write-Host "Task finished"

@@ -178,3 +178,6 @@ New-BCContainer @Parameters -containername $containerName -imageName $imageName 
                 -Credential $credential `
                 -doNotUseRuntimePackages `
                 -enableTaskScheduler:$false
+
+Write-Host
+Write-Host "Task finished"

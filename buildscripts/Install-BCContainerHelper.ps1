@@ -65,3 +65,6 @@ else {
         Write-Host "BCContainerHelper $VersionStr installed"
     }
 }
+
+Write-Host
+Write-Host "Task finished"

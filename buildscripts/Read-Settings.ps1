@@ -70,3 +70,6 @@ Write-Host "##vso[task.setvariable variable=FullLicensePath]$FullLicensePath"
 $Password = "abc123"
 Write-Host "Set Container Password"
 Write-Host "##vso[task.setvariable variable=Password]$Password"  
+
+Write-Host
+Write-Host "Task finished"
