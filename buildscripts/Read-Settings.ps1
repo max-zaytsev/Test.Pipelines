@@ -62,7 +62,7 @@ Write-Host "##vso[task.setvariable variable=imageName]$($containerImage)"
 # if($addDefaultNetworkPath -eq 'true'){
 #     $FullLicensePath = Join-Path -Path $LicensePath -ChildPath $LicenseFile
 # } else {
-    $FullLicensePath = Join-Path $buildProjectFolder 'Cronus.flf'
+    $FullLicensePath = Join-Path $buildProjectFolder 'buildscripts\Cronus.flf'
 # }
 Write-Host "Set FullLicensePath = $FullLicensePath"
 Write-Host "##vso[task.setvariable variable=FullLicensePath]$FullLicensePath"  
