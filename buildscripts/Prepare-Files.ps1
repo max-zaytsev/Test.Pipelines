@@ -42,15 +42,16 @@ Param(
     [string] $AppJSONPreProcessorSymbols = ''
 )
 
-$appCompileFolder = Join-Path $projectFolderPath $versionName
+# $appCompileFolder = Join-Path $projectFolderPath $versionName
+$appCompileFolder = $projectFolderPath
 $appSourceFolder = Join-Path $projectFolderPath $appFolder
 
 Write-Host "Set appCompileFolder = $($appCompileFolder)"
 Write-Host "##vso[task.setvariable variable=appCompileFolder]$($appCompileFolder)"
 Write-Host "appSourceFolder $appSourceFolder"
 
-Write-Host "Copying $appSourceFolder to $appCompileFolder"
-Copy-Item -Path $appSourceFolder -Destination $appCompileFolder -Recurse
+# Write-Host "Copying $appSourceFolder to $appCompileFolder"
+# Copy-Item -Path $appSourceFolder -Destination $appCompileFolder -Recurse
 
 $appJsonFile = Join-Path $appCompileFolder "$appFolder\app.json"
 
