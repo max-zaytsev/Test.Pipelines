@@ -176,6 +176,5 @@ New-BCContainer @Parameters -containername $containerName -imageName $imageName 
                 -alwaysPull:$alwaysPull `
                 -auth "UserPassword" `
                 -Credential $credential `
-                -additionalParameters $additionalParameters `
                 -doNotUseRuntimePackages `
                 -enableTaskScheduler:$false
