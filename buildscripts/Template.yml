@@ -12,7 +12,7 @@ stages:
       displayName: 'Install BCContainerHelper'
       inputs:
         targetType: filePath
-        filePath: 'Install-BCContainerHelper.ps1'
+        filePath: 'buildscripts\Install-BCContainerHelper.ps1'
         failOnStderr: true
 
 - ${{ each version in parameters.selectVersions }}:
@@ -35,7 +35,7 @@ stages:
           timeoutInMinutes: 10
           inputs:
             targetType: filePath
-            filePath: 'Read-Settings.ps1'
+            filePath: 'buildscripts\Read-Settings.ps1'
             arguments: '-containername "${{ version.Container.containerName }}" -containerimage "${{ version.Container.Imagename }}"'
             failOnStderr: true
 
@@ -47,7 +47,7 @@ stages:
             LicenseFile: $(LicenseFile)
           inputs:
             targetType: filePath
-            filePath: 'Create-Container.ps1'
+            filePath: 'buildscripts\Create-Container.ps1'
             arguments: '-imageName "${{ version.Container.Imagename }}" 
                         -ContainerMajor "${{ version.Container.Major }}" 
                         -ContainerMinor "${{ version.Container.Minor }}" 
@@ -69,7 +69,7 @@ stages:
             timeoutInMinutes: 20
             inputs:
               targetType: filePath
-              filePath: 'Comsol.Build.Pipelines\buildscripts\Copy-DotNetPackages.ps1'
+              filePath: 'buildscripts\Copy-DotNetPackages.ps1'
               arguments: '-appfolder ${{ appFolder }}'
               failOnStderr: true
 
@@ -78,7 +78,7 @@ stages:
           timeoutInMinutes: 20
           inputs:
             targetType: filePath
-            filePath: 'Restart-Container.ps1'
+            filePath: 'buildscripts\Restart-Container.ps1'
             arguments: '-Target "${{ version.Container.Target }}"'
 
         - ${{ each dependencyFolder in version.dependencyFolders }}:
@@ -87,7 +87,7 @@ stages:
             timeoutInMinutes: 20
             inputs:
               targetType: filePath
-              filePath: 'Comsol.Build.Pipelines\buildscripts\Install-Dependencies.ps1'
+              filePath: 'buildscripts\Install-Dependencies.ps1'
               # arguments: '-DependencyFolder "${{ dependencyFolder }}"'
               failOnStderr: true
 
@@ -96,7 +96,7 @@ stages:
             displayName: 'Prepare files ${{ appFolder }}'
             timeoutInMinutes: 10
             inputs:
-              filePath: 'Comsol.Build.Pipelines\buildscripts\Prepare-Files.ps1'
+              filePath: 'buildscripts\Prepare-Files.ps1'
               arguments: '-appFolder "${{ appFolder }}"
                           -versionName "${{ version.versionName }}"
                           -AppJSONMajor "${{ version.AppJSON.Major }}"
@@ -120,7 +120,7 @@ stages:
               Password: $(Password)
             inputs:
               targetType: filePath
-              filePath: 'Comsol.Build.Pipelines\buildscripts\Compile-App.ps1'
+              filePath: 'buildscripts\Compile-App.ps1'
               arguments: '-appFolder ${{ appFolder }} -versionName ${{ version.versionName }}'
               failOnStderr: true
 
@@ -133,7 +133,7 @@ stages:
       #         CertificatePassword: $(CertificatePassword)
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Sign-App.ps1'
+      #         filePath: 'buildscripts\Sign-App.ps1'
       #         arguments: '-appfolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
       #         failOnStderr: true
 
@@ -144,7 +144,7 @@ stages:
       #       timeoutInMinutes: 10
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Publish-App.ps1'
+      #         filePath: 'buildscripts\Publish-App.ps1'
       #         arguments: '-skipVerification -appFolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
       #         failOnStderr: true
 
@@ -153,7 +153,7 @@ stages:
       #       displayName: 'Prepare Test files ${{ testFolder }}'
       #       timeoutInMinutes: 10
       #       inputs:
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Prepare-Files.ps1'
+      #         filePath: 'buildscripts\Prepare-Files.ps1'
       #         arguments: '-appFolder "${{ testFolder }}"
       #                     -versionName "${{ version.versionName }}"
       #                     -AppJSONMajor "${{ version.AppJSON.Major }}"
@@ -177,7 +177,7 @@ stages:
       #         Password: $(Password)
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Compile-App.ps1'
+      #         filePath: 'buildscripts\Compile-App.ps1'
       #         arguments: '-appFolder "${{ testFolder }}" -versionName ${{ version.versionName }}'
       #         failOnStderr: true
 
@@ -187,7 +187,7 @@ stages:
       #       condition: succeeded()
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Publish-App.ps1'
+      #         filePath: 'buildscripts\Publish-App.ps1'
       #         arguments: '-appFolder "${{ testFolder }}" -versionName "${{ version.versionName }}" -skipVerification'
       #         failOnStderr: true
           
@@ -199,7 +199,7 @@ stages:
       #         Password: $(Password)
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Run-Tests.ps1'
+      #         filePath: 'buildscripts\Run-Tests.ps1'
       #         failOnStderr: true
             
       #     - task: PublishTestResults@2
@@ -225,7 +225,7 @@ stages:
             condition: and(succeeded(),eq(variables['createRuntimePackages'],'True'))
             inputs:
               targetType: filePath
-              filePath: 'Comsol.Build.Pipelines\buildscripts\Get-AppRuntimePackage.ps1'
+              filePath: 'buildscripts\Get-AppRuntimePackage.ps1'
               arguments: '-appfolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
               failOnStderr: true
 
@@ -238,7 +238,7 @@ stages:
       #         codeSignPfxPassword: $(CodeSignPfxPassword)
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Sign-App.ps1'
+      #         filePath: 'buildscripts\Sign-App.ps1'
       #         arguments: '-SignRuntimePackage $true -appfolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
       #         failOnStderr: true
 
@@ -253,7 +253,7 @@ stages:
       #   #   displayName: 'Copy deployment scripts'
       #   #   inputs:
       #   #     targetType: inline
-      #   #     script: 'Copy-Item -Path Comsol.Build.Pipelines\buildscripts\Deploy-App.ps1 -Destination $(Build.ArtifactStagingDirectory); Copy-Item -Path Comsol.Build.Pipelines\buildscripts\SessionFunctions.ps1 -Destination $(Build.ArtifactStagingDirectory)'
+      #   #     script: 'Copy-Item -Path buildscripts\Deploy-App.ps1 -Destination $(Build.ArtifactStagingDirectory); Copy-Item -Path buildscripts\SessionFunctions.ps1 -Destination $(Build.ArtifactStagingDirectory)'
       #   #     failOnStderr: true
 
       #     - task: PowerShell@2
@@ -262,7 +262,7 @@ stages:
       #       condition: and(succeeded(), eq('${{ version.Publishing.AppExport }}', 'true'))
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Copy-AppPackage.ps1'
+      #         filePath: 'buildscripts\Copy-AppPackage.ps1'
       #         arguments: '-appfolder "${{ appFolder }}" 
       #                     -versionName "${{ version.versionName }}" 
       #                     -addInfoboxPath "${{ version.Publishing.addInfoboxPath }}" 
@@ -277,7 +277,7 @@ stages:
       #       condition: and(succeeded(), eq('${{ version.Deployment.AppExport }}', 'true'))
       #       inputs:
       #         targetType: filePath
-      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Copy-AppPackage.ps1'
+      #         filePath: 'buildscripts\Copy-AppPackage.ps1'
       #         arguments: '-appfolder "${{ appFolder }}" 
       #                     -versionName "${{ version.versionName }}" 
       #                     -addInfoboxPath "${{ version.Deployment.addInfoboxPath }}" 
@@ -303,5 +303,5 @@ stages:
         #   # condition: ne(variables['reuseContainer'],'True')
         #   inputs:
         #     targetType: filePath
-        #     filePath: 'Comsol.Build.Pipelines\buildscripts\Remove-Container.ps1'
+        #     filePath: 'buildscripts\Remove-Container.ps1'
         #     arguments: '-containername "${{ version.Container.containerName }}" -addBuildID'
