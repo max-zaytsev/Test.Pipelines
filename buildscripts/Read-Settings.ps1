@@ -49,8 +49,8 @@ if (Test-Path $versionFilePath){
     Write-Host "Set VersionJSON = $($false)"
     Write-Host "##vso[task.setvariable variable=VersionJSON]$($false)"
 }
-# Write-Host "projectFolderPath $projectFolderPath"
-# write-host "##vso[task.setvariable variable=projectFolderPath]$projectFolderPath"
+Write-Host "projectFolderPath $projectFolderPath"
+write-host "##vso[task.setvariable variable=projectFolderPath]$projectFolderPath"
 
 $containerName = -join($containerName, $($env:Build_BuildId))
 Write-Host "Set containername = $($containername)"

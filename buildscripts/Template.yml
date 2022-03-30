@@ -60,7 +60,7 @@ stages:
             failOnStderr: true
 
         - powershell: |
-            Write-Host "Set RestartNeeded = $true"
+            Write-Host "Set RestartNeeded = $false"
             Write-Host "##vso[task.setvariable variable=RestartNeeded]$($false)"
 
         - ${{ each appFolder in parameters.appFolders }}:
