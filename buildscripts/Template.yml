@@ -287,8 +287,6 @@ stages:
       #                     -InfoBoxPath "$(InfoBox)" 
       #                     -RuntimePackage'
 
-        - powershell: |
-            docker stop ${{ version.Container.containerName }}
 
 # - stage: 'removecontainers'
 #   displayName: 'Remove Containers'
@@ -298,13 +296,13 @@ stages:
 #       steps:
 #       - checkout: BuildPipelines
       # - ${{ each version in parameters.selectVersions }}:
-        # - task: PowerShell@2
-        #   displayName: 'Remove Container ${{ version.Container.containerName }}'
-        #   timeoutInMinutes: 30
-        #   condition: always()
-        #   continueOnError: true
-        #   # condition: ne(variables['reuseContainer'],'True')
-        #   inputs:
-        #     targetType: filePath
-        #     filePath: 'buildscripts\Remove-Container.ps1'
-        #     arguments: '-containername "${{ version.Container.containerName }}" -addBuildID'
+        - task: PowerShell@2
+          displayName: 'Remove Container ${{ version.Container.containerName }}'
+          timeoutInMinutes: 30
+          condition: always()
+          continueOnError: true
+          # condition: ne(variables['reuseContainer'],'True')
+          inputs:
+            targetType: filePath
+            filePath: 'buildscripts\Remove-Container.ps1'
+            arguments: '-containername "${{ version.Container.containerName }}" -addBuildID'

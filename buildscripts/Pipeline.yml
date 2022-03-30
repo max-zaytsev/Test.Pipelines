@@ -160,15 +160,3 @@ stages:
         }
       }
     ]
-
-- stage: Purge
-  jobs:
-    - job: PurgeContainers
-      steps:
-      - powershell: |
-          Write-Host "docker ps -aq"
-          Write-Host "docker stop $(docker ps -aq)"
-          Write-Host "docker rm $(docker ps -aq)"
-          Write-Host "docker rmi $(docker images -q)"
-          Write-Host "docker ps -aq"
-
