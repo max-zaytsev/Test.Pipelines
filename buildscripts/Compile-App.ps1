@@ -30,7 +30,8 @@ if (-not ($credential)) {
     $credential = New-Object PSCredential -ArgumentList $ENV:USERNAME, $SecurePassword
 }
 
-$ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+# $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+$ArtifactFolder = $buildArtifactFolder
 $ArtifactFolder = Join-Path $ArtifactFolder $appFolder
 
 Write-Host "ArtifactFolder $ArtifactFolder"

@@ -39,7 +39,7 @@
 
     [Parameter(Mandatory = $false)]
     [String] $FullLicensePath = $env:FULLLICENSEPATH,
-    
+
     [Parameter(Mandatory = $false)]
     [string] $projectFolderPath = $ENV:PROJECTFOLDERPATH,
 
@@ -148,7 +148,7 @@ $workspaceFolder = $projectFolderPath
 $additionalParameters = @("--volume ""${workspaceFolder}:C:\Source\build""")
 write-host "workspacefolder $workspaceFolder"
 
-# $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+# # $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
 # New-Item -ItemType Directory -Path $ArtifactFolder
 $ArtifactFolder = $buildArtifactFolder
 $additionalParameters += @("--volume ""${ArtifactFolder}:C:\Source\artifact""")

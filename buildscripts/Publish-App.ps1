@@ -24,7 +24,8 @@
 
 Write-Host "Serving container $containerName"
 
-$ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+# $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+$ArtifactFolder = $buildArtifactFolder
 $ArtifactFolder = Join-Path $ArtifactFolder $appFolder
 
 Write-Host "ArtifactFolder $ArtifactFolder"
