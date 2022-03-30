@@ -15,3 +15,6 @@ if ($addBuildID) {
 Write-Host "Removing Container $containerName"
 
 Remove-BCContainer -containerName $containerName
+
+Write-Host
+Write-Host "Task finished"
