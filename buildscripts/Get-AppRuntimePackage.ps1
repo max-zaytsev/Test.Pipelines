@@ -21,7 +21,8 @@
     [Parameter(Mandatory=$false)]
     [string] $appVersion = ""
 )
-$ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+# $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+$ArtifactFolder = $buildArtifactFolder
 $ArtifactFolder = Join-Path $ArtifactFolder $appFolder
 
 Write-Host "ArtifactFolder $ArtifactFolder"
