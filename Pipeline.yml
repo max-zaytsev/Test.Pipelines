@@ -1,0 +1,143 @@
+trigger:
+- None
+
+# pool:
+#   name: OnPremise
+
+stages:
+- template: Template.yml
+  parameters:
+    selectVersions: [
+      {
+        versionName: '15_4',
+        Container: {
+          containerName: '154',
+          Imagename: '15-4-de-onprem',
+          Major: 15,
+          Minor: 4,
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '15_de_latest',
+        Container: {
+          containerName: '15dl',
+          Imagename: '15-de-onprem-latest',
+          Major: 15,
+          Minor: '',
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '16_1',
+        Container: {
+          containerName: 'cmt161',
+          Imagename: '16-1-de-onprem',
+          Major: 16,
+          Minor: 1,
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '16_de_latest',
+        Container: {
+          containerName: 'cmt16dl',
+          Imagename: '16-de-onprem-latest',
+          Major: 16,
+          Minor: '',
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '17_0',
+        Container: {
+          containerName: 'cmt170',
+          Imagename: '17-0-de-onprem',
+          Major: 17,
+          Minor: 0,
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '17_de_latest',
+        Container: {
+          containerName: 'cmt17dl',
+          Imagename: '17-de-onprem-latest',
+          Major: 17,
+          Minor: '',
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '18_0',
+        Container: {
+          containerName: 'cmt180',
+          Imagename: '18-0-de-onprem',
+          Major: 18,
+          Minor: 0,
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '18_de_latest',
+        Container: {
+          containerName: 'cmt18dl',
+          Imagename: '18-de-onprem-latest',
+          Major: 18,
+          Minor: '',
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '19_0',
+        Container: {
+          containerName: 'cmt190',
+          Imagename: '19-0-de-onprem',
+          Major: 19,
+          Minor: 0,
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      },
+      {
+        versionName: '19_de_latest',
+        Container: {
+          containerName: 'cmt19dl',
+          Imagename: '19-de-onprem-latest',
+          Major: 19,
+          Minor: '',
+          Country: 'de',
+          target: 'OnPrem',
+          storageAccount: ''
+        }
+      }
+    ]
+
+- stage: Purge
+  jobs:
+    - job: PurgeContainers
+      steps:
+      - powershell: |
+          Write-Host "docker ps -aq"
+          Write-Host "docker stop $(docker ps -aq)"
+          Write-Host "docker rm $(docker ps -aq)"
+          Write-Host "docker rmi $(docker images -q)"
+          Write-Host "docker ps -aq"
+

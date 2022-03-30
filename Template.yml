@@ -1,0 +1,297 @@
+parameters:
+  selectVersions: 
+    
+stages:
+- stage: Start
+  jobs:
+  - job: Start
+
+    steps:
+    - task: PowerShell@2
+      displayName: Init
+      inputs:
+        targetType: 'inline'
+        script: |
+          Write-Host "Initial task"
+
+- ${{ each version in parameters.selectVersions }}:
+  - stage: 'build${{ version.versionName }}'
+    displayName: '${{ version.versionName }}'
+    dependsOn: Start
+    jobs:
+      - job: BuildContainer
+        variables:
+          build.clean: all
+          platform: x64
+          version: "latest"
+          release: True
+          createRuntimePackages: True
+          skipComponentGovernanceDetection: True
+        steps:
+
+        - task: PowerShell@2
+          displayName: 'Create Container ${{ version.Container.containerName }}'
+          timeoutInMinutes: 30
+          env:
+            Password: $(Password)
+            LicenseFile: $(LicenseFile)
+          inputs:
+            targetType: filePath
+            filePath: 'Comsol.Build.Pipelines\buildscripts\Create-Container.ps1'
+            arguments: '-imageName "${{ version.Container.Imagename }}" 
+                        -ContainerMajor "${{ version.Container.Major }}" 
+                        -ContainerMinor "${{ version.Container.Minor }}" 
+                        -ContainerTarget "${{ version.Container.Target }}" 
+                        -ContainerCountry "${{ version.Container.Country }}" 
+                        -ContainerStorageAccount "${{ version.Container.storageAccount }}" 
+                        -ContainerSasToken "${{ version.Container.sasToken }}" 
+                        -versionName "${{ version.versionName }}"'
+            # arguments: '-NetworkPath $(LicensePath) -licenseFile ${{ version.license.licenseFilePath }} -addLicensePath ${{ version.license.addDefaultLicensePath }} -containerName ${{ version.Container.containerName }}'
+            failOnStderr: true
+
+        - powershell: |
+            Write-Host "Set RestartNeeded = $true"
+            Write-Host "##vso[task.setvariable variable=RestartNeeded]$($false)"
+
+        # - ${{ each appFolder in parameters.appFolders }}:
+        #   - task: PowerShell@2
+        #     displayName: 'Copy DotNet-Dlls ${{ appFolder }}'
+        #     timeoutInMinutes: 20
+        #     inputs:
+        #       targetType: filePath
+        #       filePath: 'Comsol.Build.Pipelines\buildscripts\Copy-DotNetPackages.ps1'
+        #       arguments: '-appfolder ${{ appFolder }}'
+        #       failOnStderr: true
+
+        - task: PowerShell@2
+          displayName: 'Restart ${{ version.Container.containerName }}'
+          timeoutInMinutes: 20
+          inputs:
+            targetType: filePath
+            filePath: 'Comsol.Build.Pipelines\buildscripts\Restart-Container.ps1'
+            arguments: '-Target "${{ version.Container.Target }}"'
+
+        # - ${{ each dependencyFolder in version.dependencyFolders }}:
+        #   - task: PowerShell@2
+        #     displayName: 'Install Dependency'
+        #     timeoutInMinutes: 20
+        #     inputs:
+        #       targetType: filePath
+        #       filePath: 'Comsol.Build.Pipelines\buildscripts\Install-Dependencies.ps1'
+        #       arguments: '-DependencyFolder "${{ dependencyFolder }}"'
+        #       failOnStderr: true
+
+      #   - ${{ each appFolder in parameters.appFolders }}:
+      #     - task: PowerShell@2
+      #       displayName: 'Prepare files ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       inputs:
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Prepare-Files.ps1'
+      #         arguments: '-appFolder "${{ appFolder }}"
+      #                     -versionName "${{ version.versionName }}"
+      #                     -AppJSONMajor "${{ version.AppJSON.Major }}"
+      #                     -AppJSONMinor "${{ version.AppJSON.Minor }}"
+      #                     -AppJSONPlatform "${{ version.AppJSON.platform }}"
+      #                     -AppJSONApplication "${{ version.AppJSON.application }}"
+      #                     -AppJSONRuntime "${{ version.AppJSON.runtime }}"
+      #                     -AppJSONTarget "${{ version.AppJSON.target }}"
+      #                     -AppJSONShowMyCode "${{ version.AppJSON.showMyCode }}"
+      #                     -AppJSONrEPAllowDebugging "${{ version.AppJSON.resourceExposurePolicy.allowDebugging }}"
+      #                     -AppJSONrEPAllowDownloadingSourceCode "${{ version.AppJSON.resourceExposurePolicy.allowDownloadingSource }}"
+      #                     -AppJSONrEPIncludeSourceInSymbolFile "${{ version.AppJSON.resourceExposurePolicy.includeSourceInSymbolFile }}"
+      #                     -AppJSONPreProcessorSymbols "${{ version.AppJSON.PreProcessorSymbols }}"
+      #                     '
+
+
+      #     - task: PowerShell@2
+      #       displayName: 'Compile ${{ appFolder }}'
+      #       timeoutInMinutes: 20
+      #       env:
+      #         Password: $(Password)
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Compile-App.ps1'
+      #         arguments: '-appFolder ${{ appFolder }} -versionName ${{ version.versionName }}'
+      #         failOnStderr: true
+
+      #     - task: PowerShell@2
+      #       displayName: 'Sign App ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: and(succeeded(),ne(variables['CodeSignCertificate'],''),ne(variables['CertificatePassword'],''))
+      #       env:
+      #         CodeSignCertificate: $(CodeSignCertificate)
+      #         CertificatePassword: $(CertificatePassword)
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Sign-App.ps1'
+      #         arguments: '-appfolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
+      #         failOnStderr: true
+
+      # #   condition: eq(version.Deployment.AppExport, true)
+      # #   steps:
+      #     - task: PowerShell@2
+      #       displayName: 'Publish App ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Publish-App.ps1'
+      #         arguments: '-skipVerification -appFolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
+      #         failOnStderr: true
+
+      #   - ${{ each testFolder in parameters.testFolders }}:
+      #     - task: PowerShell@2
+      #       displayName: 'Prepare Test files ${{ testFolder }}'
+      #       timeoutInMinutes: 10
+      #       inputs:
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Prepare-Files.ps1'
+      #         arguments: '-appFolder "${{ testFolder }}"
+      #                     -versionName "${{ version.versionName }}"
+      #                     -AppJSONMajor "${{ version.AppJSON.Major }}"
+      #                     -AppJSONMinor "${{ version.AppJSON.Minor }}"
+      #                     -AppJSONPlatform "${{ version.AppJSON.platform }}"
+      #                     -AppJSONApplication "${{ version.AppJSON.application }}"
+      #                     -AppJSONRuntime "${{ version.AppJSON.runtime }}"
+      #                     -AppJSONTarget "${{ version.AppJSON.target }}"
+      #                     -AppJSONShowMyCode "${{ version.AppJSON.showMyCode }}"
+      #                     -AppJSONrEPAllowDebugging "${{ version.AppJSON.resourceExposurePolicy.allowDebugging }}"
+      #                     -AppJSONrEPAllowDownloadingSourceCode "${{ version.AppJSON.resourceExposurePolicy.allowDownloadingSource }}"
+      #                     -AppJSONrEPIncludeSourceInSymbolFile "${{ version.AppJSON.resourceExposurePolicy.includeSourceInSymbolFile }}"
+      #                     -AppJSONPreProcessorSymbols "${{ version.AppJSON.PreProcessorSymbols }}"
+      #                     '
+
+      #     - task: PowerShell@2
+      #       displayName: 'Compile Test App ${{ testFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: succeeded()
+      #       env:
+      #         Password: $(Password)
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Compile-App.ps1'
+      #         arguments: '-appFolder "${{ testFolder }}" -versionName ${{ version.versionName }}'
+      #         failOnStderr: true
+
+      #     - task: PowerShell@2
+      #       displayName: 'Publish Test App  ${{ testFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: succeeded()
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Publish-App.ps1'
+      #         arguments: '-appFolder "${{ testFolder }}" -versionName "${{ version.versionName }}" -skipVerification'
+      #         failOnStderr: true
+          
+      #     - task: PowerShell@2
+      #       displayName: 'Run Tests  ${{ testFolder }}'
+      #       timeoutInMinutes: 20
+      #       condition: succeeded()
+      #       env:
+      #         Password: $(Password)
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Run-Tests.ps1'
+      #         failOnStderr: true
+            
+      #     - task: PublishTestResults@2
+      #       displayName: 'Publish Test Results  ${{ testFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: succeeded()
+      #       inputs:
+      #         testResultsFormat: XUnit
+      #         testResultsFiles: TestResults.xml
+      #         failTaskOnFailedTests: true
+
+      #     - task: PublishBuildArtifacts@1
+      #       displayName: 'Publish Artifacts  ${{ testFolder }}'
+      #       timeoutInMinutes: 10
+      #       inputs:
+      #         PathtoPublish: '$(Build.ArtifactStagingDirectory)\${{ version.versionName }}\${{ testFolder }}'
+      #         ArtifactName: ${{ version.versionName }}\${{ testFolder }}
+              
+      #   - ${{ each appFolder in parameters.appFolders }}:
+      #     - task: PowerShell@2
+      #       displayName: 'Get RuntimePackage ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: and(succeeded(),eq(variables['createRuntimePackages'],'True'))
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Get-AppRuntimePackage.ps1'
+      #         arguments: '-appfolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
+      #         failOnStderr: true
+
+      #     - task: PowerShell@2
+      #       displayName: 'Sign RuntimePackage  ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: and(succeeded(),ne(variables['CodeSignCertificate'],''),ne(variables['CertificatePassword'],''))
+      #       env:
+      #         codeSignPfxFile: $(CodeSignPfxFile)
+      #         codeSignPfxPassword: $(CodeSignPfxPassword)
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Sign-App.ps1'
+      #         arguments: '-SignRuntimePackage $true -appfolder "${{ appFolder }}" -versionName "${{ version.versionName }}"'
+      #         failOnStderr: true
+
+      #     - task: PublishBuildArtifacts@1
+      #       displayName: 'Publish Artifacts  ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       inputs:
+      #         PathtoPublish: '$(Build.ArtifactStagingDirectory)\${{ version.versionName }}\${{ appFolder }}'
+      #         ArtifactName: ${{ version.versionName }}\${{ appFolder }}
+
+      #   # - task: PowerShell@2
+      #   #   displayName: 'Copy deployment scripts'
+      #   #   inputs:
+      #   #     targetType: inline
+      #   #     script: 'Copy-Item -Path Comsol.Build.Pipelines\buildscripts\Deploy-App.ps1 -Destination $(Build.ArtifactStagingDirectory); Copy-Item -Path Comsol.Build.Pipelines\buildscripts\SessionFunctions.ps1 -Destination $(Build.ArtifactStagingDirectory)'
+      #   #     failOnStderr: true
+
+      #     - task: PowerShell@2
+      #       displayName: 'Publish app on FTP  ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: and(succeeded(), eq('${{ version.Publishing.AppExport }}', 'true'))
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Copy-AppPackage.ps1'
+      #         arguments: '-appfolder "${{ appFolder }}" 
+      #                     -versionName "${{ version.versionName }}" 
+      #                     -addInfoboxPath "${{ version.Publishing.addInfoboxPath }}" 
+      #                     -ArchiveOldVersion "${{ version.Publishing.ArchiveOldVersion }}" 
+      #                     -DeploymentPath "${{ version.Publishing.DeploymentPath }}" 
+      #                     -Archivepath "${{ version.Publishing.Archivepath }}" 
+      #                     -InfoBoxPath "$(InfoBox)"'
+
+      #     - task: PowerShell@2
+      #       displayName: 'Publish runtime on FTP  ${{ appFolder }}'
+      #       timeoutInMinutes: 10
+      #       condition: and(succeeded(), eq('${{ version.Deployment.AppExport }}', 'true'))
+      #       inputs:
+      #         targetType: filePath
+      #         filePath: 'Comsol.Build.Pipelines\buildscripts\Copy-AppPackage.ps1'
+      #         arguments: '-appfolder "${{ appFolder }}" 
+      #                     -versionName "${{ version.versionName }}" 
+      #                     -addInfoboxPath "${{ version.Deployment.addInfoboxPath }}" 
+      #                     -ArchiveOldVersion "${{ version.Deployment.ArchiveOldVersion }}" 
+      #                     -DeploymentPath "${{ version.Deployment.DeploymentPath }}" 
+      #                     -Archivepath "${{ version.Deployment.Archivepath }}" 
+      #                     -InfoBoxPath "$(InfoBox)" 
+      #                     -RuntimePackage'
+
+# - stage: 'removecontainers'
+#   displayName: 'Remove Containers'
+#   condition: always()
+#   jobs:
+#     - job: RemoveContainers
+#       steps:
+#       - checkout: BuildPipelines
+      # - ${{ each version in parameters.selectVersions }}:
+        # - task: PowerShell@2
+        #   displayName: 'Remove Container ${{ version.Container.containerName }}'
+        #   timeoutInMinutes: 30
+        #   condition: always()
+        #   continueOnError: true
+        #   # condition: ne(variables['reuseContainer'],'True')
+        #   inputs:
+        #     targetType: filePath
+        #     filePath: 'Comsol.Build.Pipelines\buildscripts\Remove-Container.ps1'
+        #     arguments: '-containername "${{ version.Container.containerName }}" -addBuildID'
