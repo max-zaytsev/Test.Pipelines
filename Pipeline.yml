@@ -1,8 +1,8 @@
 trigger:
 - None
 
-# pool:
-#   name: OnPremise
+pool:
+  name: OnPremise
 
 stages:
 - template: Template.yml
