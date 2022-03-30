@@ -15,7 +15,7 @@ Param(
     [string] $containername,
 
     [Parameter(Mandatory=$false)]
-    [string] $containerimage,
+    [string] $containerimage
 
     # [Parameter(Mandatory=$true)]
     # [string] $licensePath
