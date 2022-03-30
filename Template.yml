@@ -30,6 +30,15 @@ stages:
         steps:
 
         - task: PowerShell@2
+          displayName: 'Reading Settings'
+          timeoutInMinutes: 10
+          inputs:
+            targetType: filePath
+            filePath: 'Read-Settings.ps1'
+            arguments: '-containername "${{ version.Container.containerName }}" -containerimage "${{ version.Container.Imagename }}" -licensePath "./Cronus.flf" '
+            failOnStderr: true
+
+        - task: PowerShell@2
           displayName: 'Create Container ${{ version.Container.containerName }}'
           timeoutInMinutes: 30
           env:
