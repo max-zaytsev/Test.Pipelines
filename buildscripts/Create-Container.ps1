@@ -38,7 +38,13 @@
     [string] $ContainerSasToken,
 
     [Parameter(Mandatory = $false)]
-    [String] $FullLicensePath = $env:FULLLICENSEPATH
+    [String] $FullLicensePath = $env:FULLLICENSEPATH,
+    
+    [Parameter(Mandatory = $false)]
+    [string] $projectFolderPath = $ENV:PROJECTFOLDERPATH,
+
+    [Parameter(Mandatory = $false)]
+    [string] $buildArtifactFolder = $ENV:BUILD_ARTIFACTSTAGINGDIRECTORY
 )
 
 function GetURL{
@@ -136,13 +142,15 @@ if ($FullLicensePath) {
     }
 }
 
-$workspaceFolder = Join-Path $projectFolderPath $versionName
-New-Item -ItemType Directory -Path $workspaceFolder
+# $workspaceFolder = Join-Path $projectFolderPath $versionName
+# New-Item -ItemType Directory -Path $workspaceFolder
+$workspaceFolder = $projectFolderPath
 $additionalParameters = @("--volume ""${workspaceFolder}:C:\Source\build""")
 write-host "workspacefolder $workspaceFolder"
 
-$ArtifactFolder = Join-Path $buildArtifactFolder $versionName
-New-Item -ItemType Directory -Path $ArtifactFolder
+# $ArtifactFolder = Join-Path $buildArtifactFolder $versionName
+# New-Item -ItemType Directory -Path $ArtifactFolder
+$ArtifactFolder = $buildArtifactFolder
 $additionalParameters += @("--volume ""${ArtifactFolder}:C:\Source\artifact""")
 write-host "ArtifactFolder $ArtifactFolder"
 
