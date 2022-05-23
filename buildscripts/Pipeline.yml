@@ -2,7 +2,7 @@ trigger:
 - None
 
 pool:
-  name: OnPremise
+  name: MultipleAgentsOnOneHost
 
 stages:
 - template: Template.yml
