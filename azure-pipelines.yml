@@ -3,7 +3,7 @@ resources:
   - repository: MyAzureReposGitRepository # In a different organization
     endpoint: v-mazayt-org
     type: git
-    name: TestProject/TestGit
+    name: TestProject/TestProject
 
 trigger:
 - main
